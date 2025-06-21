@@ -81,22 +81,36 @@ class alucrex{
 };
 const int MOD = 1000000007;
 
+int n;
+v<string> pc;
+vi par;
+vvi chil;
+
+string dfs(int pos, int pre = -1) {
+    pre = pos;
+    pos = par[pos];
+
+    if(par[pos] == -1) return pc[pos];
+
+    return pc[pre] = dfs(pos, pre);
+}
+
 
 int main(){
     //set_time(__start__);
     alucrex al;
-    int n, querry; cin >> n >> querry;
-    v<string> pc(n+1);
+    int querry; cin >> n >> querry;
+    pc.resize(n+1);
     int svr = -1;
-    vi par(n+1, -1);
-    vvi chil(n+1);
+    par.resize(n+1, -1);
+    chil.resize(n+1);
     rep(q, querry) {
         int t, p; cin >> t >> p;
         p--;
         
         if(t == 1) {
             pc[p] = "";
-            par[p] = par[n];
+            par[p] = n;
             chil[n].emplace_back(p);
             chil[p].clear();
         }
@@ -104,28 +118,30 @@ int main(){
         if(t == 2) {
             string s;
             cin >> s;
+            string t = dfs(p);
             for(auto &c : chil[p]) {
-                pc[c] = pc[p];
+                pc[c] = t;
                 par[c] = -1;
             }
+            if(par[p] != -1) remove(all(chil[par[p]]), p);
             chil[p].clear();
-            pc[p] += s;
+            pc[p] = t + s;
         }
 
         if(t == 3) {
             svr = p;
-            par[n] = par[p];
+            par[n] = p;
             chil[p].emplace_back(n);
             chil[n].clear();
         }
+        
+        line
+        for(auto f: par) cout << f << " ";puts("");
+        line
+        al.vvdes(chil);
+        line
     }
-    int cur = n;
-    int tar = par[n];
-    while(tar == -1) {
-        cur = tar;
-        tar = par[cur];
-    }
-    cout << pc[tar] << endl;
+    cout << dfs(n) << endl;
     //set_time(__end__);
     //show_time(__start__ , __end__);
 }
