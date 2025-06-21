@@ -80,68 +80,44 @@ class alucrex{
     }
 };
 const int MOD = 1000000007;
-
-int n;
-v<string> pc;
 vi par;
-vvi chil;
+v<string> a;
+vP cur;
 
-string dfs(int pos, int pre = -1) {
-    pre = pos;
-    pos = par[pos];
-
-    if(par[pos] == -1) return pc[pos];
-
-    return pc[pre] = dfs(pos, pre);
+string dfs(int &s, int e) {
+    // puts("dsf");
+    if(e == -1) return "";
+    if(e == s) return a[s];
+    return dfs(s, par[e]) + a[e];
 }
 
 
 int main(){
     //set_time(__start__);
     alucrex al;
-    int querry; cin >> n >> querry;
-    pc.resize(n+1);
-    int svr = -1;
-    par.resize(n+1, -1);
-    chil.resize(n+1);
-    rep(q, querry) {
+    int n, q; cin >> n >> q;
+    a.resize(q);
+    cur.resize(n+1, {0, -1});
+    
+    int c = 0;
+    while(q--) {
         int t, p; cin >> t >> p;
-        p--;
         
         if(t == 1) {
-            pc[p] = "";
-            par[p] = n;
-            chil[n].emplace_back(p);
-            chil[p].clear();
+            cur[p] = cur[0];
         }
         
         if(t == 2) {
-            string s;
-            cin >> s;
-            string t = dfs(p);
-            for(auto &c : chil[p]) {
-                pc[c] = t;
-                par[c] = -1;
-            }
-            if(par[p] != -1) remove(all(chil[par[p]]), p);
-            chil[p].clear();
-            pc[p] = t + s;
+            par.emplace_back(c) = cur[p].second;
+            cur[p].second = c;
+            cin >> a[c++];
         }
 
         if(t == 3) {
-            svr = p;
-            par[n] = p;
-            chil[p].emplace_back(n);
-            chil[n].clear();
+            cur[0] = cur[p];
         }
-        
-        line
-        for(auto f: par) cout << f << " ";puts("");
-        line
-        al.vvdes(chil);
-        line
     }
-    cout << dfs(n) << endl;
+    cout << dfs(cur[0].first, cur[0].second) << endl;
     //set_time(__end__);
     //show_time(__start__ , __end__);
 }
