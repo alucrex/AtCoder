@@ -81,119 +81,36 @@ class alucrex{
 };
 const int MOD = 1000000007;
 
-
-void up(vi &tb, int p) {
-    int i = p;
-    for(;;i++) {
-        if(tb[i]) {
-            tb[i]--;
-            tb[i+1]++;
-            return;
-        }
-    }
-}
-
-void down(vi &tb, int p) {
-    int i = p;
-    for(;;i--) {
-        if(tb[i]) {
-            tb[i]--;
-            tb[i-1]++;
-            return;
-        }
-    }
-}
-
 int main(){
     //set_time(__start__);
     alucrex al;
     int n, m; cin >> n >> m;
-    vi d(n, 0);
-    vi tb(n, 0);
+    vvi d(n, vi(n, 0));
     rep(i, m) {
         int a, b; cin >> a >> b;
         a--, b--;
-        d[a]++;
-        d[b]++;
+        d[a][b] = d[b][a] = 1;
     }
-    for(auto f: d) tb[f]++;
     
-    // line;
-    // for(auto f: tb) cout << f << " "; puts("");
+    int ans = INF;
+    vi a(n);
+    iota(a.begin(), a.end(), 0);
 
-    int cnt = 0;
-    // 0->1
-    // 1->2
-    rep(i, 2) {
-        cnt += tb[i]/2;
-        int mv = tb[i] - (tb[i]&1);
-        tb[i] -= mv;
-        tb[i+1] += mv;
-        if(tb[i]) {
-            cnt++;
-            tb[i]--;
-            up(tb, i);
-            tb[i+1]++;
+    do {
+        int nok = 0;
+        rep(i, n) {
+            if(nok |= (a[i] == i || a[a[i]] == i)) break;
         }
-        // for(auto f: tb) cout << f << " "; debug(cnt);
-    }
-
-    // line;
-
-    for(int i = n-1 ; i >= 3 ; i--) {
-        cnt += tb[i]/2;
-        int mv = tb[i] - (tb[i]&1);
-        tb[i] -= mv;
-        tb[i-1] += mv;
-        // for(auto f: tb) cout << f << " "; debug(cnt);
-        if(tb[i]) {
-            cnt++;
-            tb[i]--;
-            down(tb, i);
-            tb[i-1]++;
-            // for(auto f: tb) cout << f << " "; debug(cnt);
+        if(nok) continue;
+        int cnt = 0;
+        rep(i, n) {
+            cnt += d[i][a[i]];
+            chmin(ans, (m-cnt) + (n-cnt));
         }
-    }
+    } while(next_permutation(a.begin(), a.end()));
 
-    rep(i, 2) {
-        cnt += tb[i]/2;
-        int mv = tb[i] - (tb[i]&1);
-        tb[i] -= mv;
-        tb[i+1] += mv;
-        if(tb[i]) {
-            cnt++;
-            tb[i]--;
-            up(tb, i);
-            tb[i+1]++;
-        }
-        // for(auto f: tb) cout << f << " "; debug(cnt);
-    }
-
-    for(int i = n-1 ; i >= 3 ; i--) {
-        cnt += tb[i]/2;
-        int mv = tb[i] - (tb[i]&1);
-        tb[i] -= mv;
-        tb[i-1] += mv;
-        // for(auto f: tb) cout << f << " "; debug(cnt);
-        if(tb[i]) {
-            cnt++;
-            tb[i]--;
-            down(tb, i);
-            tb[i-1]++;
-            // for(auto f: tb) cout << f << " "; debug(cnt);
-        }
-    }
-
-    rep(i, n) {
-        if(i == 2) continue;
-        if(tb[i]) {
-            debug(i);
-            debug(tb[i]);
-            while(true);
-        }
-    }
-    cout << cnt << endl;
-
+    cout << ans << endl;
+    
     //set_time(__end__);
     //show_time(__start__ , __end__);
 }
